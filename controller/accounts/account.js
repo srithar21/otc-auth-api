@@ -3,6 +3,10 @@ require('dotenv').config()
 
 exports.create = async (req, reply) => { 
     try{
+        reply.setHeader('Access-Control-Allow-Origin', '*');
+        reply.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+        reply.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
+        reply.setHeader('Access-Control-Allow-Credentials', true); // If needed
         console.log(req.body)
         console.log(process.env.QA_HOST_IDENTITY_PLATFORM+'/v1/accounts:signUp?key='+process.env.QA_IDENTITY_PLATFORM_API_KEY)
         const response = await fetch(process.env.QA_HOST_IDENTITY_PLATFORM+'/v1/accounts:signUp?key='+process.env.QA_IDENTITY_PLATFORM_API_KEY, {
