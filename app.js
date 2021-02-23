@@ -9,6 +9,7 @@ var accountRoutes = require('./controller/accounts/routes')
 
 var app = express();
 
+var cors = require('cors');
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -21,7 +22,6 @@ app.use(express.json());
 //   next();
 // });
 
-var cors = require('cors');
 
 // use it before all route definitions
 app.use(cors({origin: '*'}));
