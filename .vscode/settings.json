@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/b9b38684-439c-4427-8db0-e9db044a1b14/resourceGroups/OTC-AUTHENTICATION-QA/providers/Microsoft.Web/sites/auth-qa-service",
+    "appService.deploySubpath": "."
+}

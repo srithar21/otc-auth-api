@@ -14,12 +14,17 @@ var app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-  next();
-});
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+//   next();
+// });
+
+var cors = require('cors');
+
+// use it before all route definitions
+app.use(cors({origin: '*'}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
