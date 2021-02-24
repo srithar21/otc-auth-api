@@ -3,13 +3,12 @@ var express = require('express');
 var router = express.Router();
 
 
-
+ 
  
 
 router.post('/create', accountController.create)
 
-router.get('/get', accountController.getInfo)
-
+router.post('/get', accountController.getInfo)
 
 
 module.exports = router

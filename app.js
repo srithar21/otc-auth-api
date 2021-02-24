@@ -9,6 +9,23 @@ var accountRoutes = require('./controller/accounts/routes')
 
 var app = express();
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  next();
+});
+ 
+
+
+
+app.get('/api/account/create',(req,res,next)=>{
+  request(process.env.QA_HOST_IDENTITY_PLATFORM+'/v1/accounts:signUp?key='+process.env.QA_IDENTITY_PLATFORM_API_KEY,
+   function (error, response, body) {
+       res.send(body)
+  });  
+});
+
 var cors = require('cors');
 
 
