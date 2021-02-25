@@ -49,7 +49,7 @@ exports.siginWithPassword = async (req, reply) => {
  }
 
 
- exports.getInfo = async (req, reply) => { 
+ exports.root = async (req, reply) => { 
     try{        
         let response = {
                  "auth": "/account/auth",
@@ -80,6 +80,7 @@ exports.siginWithPassword = async (req, reply) => {
         console.log(error)
     }
  }
+
  
  exports.getInfo = async (req, reply) => { 
     reply.send("Welcome to get")                                                                
