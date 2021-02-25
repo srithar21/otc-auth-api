@@ -7,8 +7,11 @@ var router = express.Router();
  
 
 router.post('/create', accountController.create)
+ 
+router.get('/', accountController.root)
 
-router.post('/get', accountController.getInfo)
+router.post('/login', accountController.siginWithPassword)
 
+router.get('/detail', accountController.getInfo)
 
 module.exports = router

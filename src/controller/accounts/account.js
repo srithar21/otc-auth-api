@@ -32,6 +32,37 @@ exports.create = async (req, reply) => {
     }                                                                               
  }
 
+exports.siginWithPassword = async (req, reply) => { 
+    try{
+        const response = await fetch(httpUtils.hostURL+'/v1/accounts:signInWithPassword?key='+httpUtils.apiKey, {
+        method: 'POST',
+        body: JSON.stringify(req.body),
+        headers: { 'Content-Type': 'application/json' }
+    });
+        const responseData = await response.json();
+        console.log(responseData.localId)
+        
+        reply.status(response.status).send(responseData)
+    }catch(error) {
+	    console.log(error);
+    }                                                                               
+ }
+
+
+ exports.getInfo = async (req, reply) => { 
+    try{        
+        let response = {
+                 "auth": "/account/auth",
+                "newAccount": "/account/create"
+         }
+        reply.status(StatusCodes.OK).send(response)
+    }catch(error) {
+	    console.log(error);
+    }                                                                               
+ }
+
+
+
  function insertCustomerData(body, response) {
      try{
     dbConnection.executeSQL("Insert into customer_master(localId, firstName, lastName, title, company, email, phone) values("
