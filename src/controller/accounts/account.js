@@ -6,11 +6,12 @@ const { ReasonPhrases,
     getStatusCode,} = require("http-status-codes");
 const dbConnection = require('../db/dbconnect.js')
 const httpUtils = require('../../util/httputils');
+const redis = require('../../util/redis')
 
 
 exports.create = async (req, reply) => { 
     try{
-        console.log("********************")
+        // console.log("********************" +redis.testCache())
         console.log(req.body)
         console.log(httpUtils.hostURL)
         const response = await fetch(httpUtils.hostURL+'/v1/accounts:signUp?key='+httpUtils.apiKey, {
@@ -79,6 +80,17 @@ exports.siginWithPassword = async (req, reply) => {
     }catch(error) {
         console.log(error)
     }
+    try{
+        dbConnection.executeSQL("SELECT TOP (1) id FROM [dbo].[customer_master] order by created_at DESC", (err, data) => {
+            if (err)
+              console.error(err);
+              console.log(JSON.stringify(data));
+              console.log(JSON.parse(JSON.stringify(data)));
+                  });
+        }catch(error) {
+            console.log(error)
+        }
+     ;
  }
 
  
