@@ -2,9 +2,10 @@
  
 const {Connection, Request} = require("tedious");
 
-exports.executeSQL = (sql, callback) => {
-console.log(sql)
-  let connection = new Connection({
+
+
+ exports.executeSQL = (sql, callback) => {
+  const connection = new Connection({
     "authentication": {
       "options": {
         userName: "admin-qa-customer", 
@@ -20,36 +21,49 @@ console.log(sql)
       "encrypt": true
     }
   });
+  console.log(sql)
 
   connection.connect((err) => {
     if (err)
       return callback(err, null);
 
-    const request = new Request(sql, (err, rowCount, rows) => {
+      var jsonArray = [];
+
+
+    const request = new Request(sql, (err, rowCount, rows,jsonArray) => {
       connection.close();
 
       if (err)
         return callback(err, null);
 
-      callback(null, {rowCount, rows});
+      callback(null, {rowCount, rows, jsonArray});
     });
+
+    // request.on('row', (columns) => {
+    //   columns.forEach((column) => {
+    //     if (column.value === null) {
+    //       console.log('NULL');
+    //     } else {
+    //       console.log(column.value);
+    //     }
+    //   });
+    // });
+
+
+// Register callback for row event
+request.on('row', (columns)=>{
+  var rowObject = {};
+  columns.forEach((column)=> {
+    rowObject[column.metadata.colName] = column.value;
+  });
+
+  jsonArray.push(rowObject);
+});
+// resolve(jsonArray);
 
     connection.execSql(request);
   });
 };
 
-// executeSQL("SELECT * FROM users", (err, data) => {
-//   if (err)
-//     console.error(err);
 
-//   console.log(data.rowCount);
-// });
-
-//or
-
-// executeSQL("SELECT * FROM users", (err, {rowCount, rows}) => {
-//   if (err)
-//     console.error(err);
-
-//   console.log(rowCount);
-// });
+ 

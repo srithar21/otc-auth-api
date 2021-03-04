@@ -9,6 +9,7 @@ const httpUtils = require('../../util/httputils');
 const redis = require('../../util/redis')
 
 
+
 exports.create = async (req, reply) => { 
     try{
         // console.log("********************" +redis.testCache())
@@ -32,6 +33,28 @@ exports.create = async (req, reply) => {
 	    console.log(error);
     }                                                                               
  }
+
+exports.accountInfo = async (req, reply) => { 
+    try{
+        // console.log("********************" +redis.testCache())
+        console.log(req.body)
+        console.log(httpUtils.hostURL)
+        const response =  await redis.getAccountInfo(req.body.userId) ;
+        console.log("%%%%%%%%%%%%%%%%%%%%%%"+response)
+        
+       
+        if (response) {
+            reply.status(StatusCodes.OK).send(response)
+        } else  {
+            reply.status(StatusCodes.NOT_FOUND).send({"message":"not found"})
+        }
+    }catch(error) {
+	    console.log(error);
+    }                                                                               
+ }
+
+
+ 
 
 exports.siginWithPassword = async (req, reply) => { 
     try{
@@ -81,12 +104,33 @@ exports.siginWithPassword = async (req, reply) => {
         console.log(error)
     }
     try{
-        dbConnection.executeSQL("SELECT TOP (1) id FROM [dbo].[customer_master] order by created_at DESC", (err, data) => {
-            if (err)
+        let uniqueId = dbConnection.executeSQL("SELECT TOP (1) id,firstName FROM [dbo].[customer_master] order by created_at DESC", (err, data,rows,jsonArray) => {
+            if (err){
               console.error(err);
-              console.log(JSON.stringify(data));
-              console.log(JSON.parse(JSON.stringify(data)));
-                  });
+            }
+           
+            data.rows.forEach((column) => {
+                if (column.value === null) {
+                    console.log('NULL');
+                } else {
+                     var accountId = JSON.stringify(column[0].value)
+                     console.log("&&&&&"+JSON.stringify(column[0].value));
+                     console.log("&&&&&"+JSON.stringify(column[1].value));
+                    let responseData ={
+                            "email": body.email,
+                            "firstName":body.firstName,
+                            "lastName":body.lastName,
+                            "title":body.ttile,
+                            "phone":body.phone,
+                            "company":body.company,
+                            "accountId":"otc"+(("0000" + accountId).slice())
+                        }  
+                        console.log(response.localId) 
+                    redis.setAccountInfo(response.localId,JSON.stringify(responseData))
+                    }
+                });
+         });
+         console.log("***************"+uniqueId)
         }catch(error) {
             console.log(error)
         }

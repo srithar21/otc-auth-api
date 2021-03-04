@@ -37,15 +37,34 @@ var cacheConnection = redis.createClient(6380, process.env.REDISCACHEHOSTNAME,
 }
 
 
-exports.setProfileInfo  = async(data) =>   {
+exports.setAccountInfo = async(key,data) =>   {
      
     console.log("\nCache command: SET data");
-    console.log("Cache response : " + await cacheConnection.setAsync("_-profile",
+    console.log("Cache response : " + await cacheConnection.setAsync(key,
     data));    
 
     // Demonstrate "SET Message" executed as expected...
     console.log("\nCache command: GET Message");
-    console.log("Cache response : " + await cacheConnection.getAsync("_-profile"));    
+    console.log("Cache response : " + await cacheConnection.getAsync(key));    
+
+   
+}
+
+
+exports.getAccountInfo = async(key, callback) =>   {
+     
+    console.log("\nCache command: GET Message");
+    console.log("Cache response getAccountInfo: " + await cacheConnection.getAsync(key));    
+
+    var response = await cacheConnection.getAsync(key);
+    if(response){
+        return response
+    } else {
+        return null
+    }
+
+    // Demonstrate "SET Message" executed as expected...
+    
 
    
 }
