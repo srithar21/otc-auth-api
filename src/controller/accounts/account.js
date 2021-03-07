@@ -37,8 +37,8 @@ exports.create = async (req, reply) => {
 
 exports.accountInfo = async (req, reply) => { 
     try{
-        console.log("*********Session***********" +req.session.email)
-        if (req.session.email == req.body.email) {
+        console.log("*********Query ***********" +req.query.email)
+        if (req.session.email == req.query.email) {
             console.log("*********Session***********" +req.session.email)
             console.log(req.body)
             console.log(httpUtils.hostURL)
@@ -129,7 +129,7 @@ exports.siginWithPassword = async (req, reply) => {
   const getAccountFromDB = (request,reply) => {
     try{
         var accountData;
-         let uniqueId = dbConnection.executeSQL("SELECT  id,firstName,lastName,title,phone,company,email,created_at FROM [dbo].[customer_master] where email='"+request.body.email+"'", (err, data,rows,jsonArray) => {
+         let uniqueId = dbConnection.executeSQL("SELECT  id,firstName,lastName,title,phone,company,email,created_at FROM [dbo].[customer_master] where email='"+request.query.email+"'", (err, data,rows,jsonArray) => {
             if (err){
               console.error(err);
             }

@@ -12,7 +12,7 @@ router.get('/', accountController.root)
 
 router.post('/login', accountController.siginWithPassword)
 
-router.post('/detail', accountController.accountInfo)
+router.get('/detail', accountController.accountInfo)
 
 
 module.exports = router
