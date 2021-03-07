@@ -18,6 +18,11 @@ app.use(function(req, res, next) {
   next();
 });
 
+var cors = require('cors');
+
+// use it before all route definitions
+app.use(cors({origin: '*'}));
+
 app.use(session({
   'secret': process.env.SECRET,
   resave: true,
@@ -34,7 +39,6 @@ app.get('/api/account/create',(req,res,next)=>{
   });  
 });
 
-var cors = require('cors');
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -42,8 +46,6 @@ app.use(express.json());
 
 
 
-// use it before all route definitions
-app.use(cors({origin: '*'}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
