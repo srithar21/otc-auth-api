@@ -129,7 +129,7 @@ exports.siginWithPassword = async (req, reply) => {
   const getAccountFromDB = (request,reply) => {
     try{
         var accountData;
-         let uniqueId = dbConnection.executeSQL("SELECT  id,firstName,lastName,title,phone,company,email FROM [dbo].[customer_master] where email='"+request.body.email+"'", (err, data,rows,jsonArray) => {
+         let uniqueId = dbConnection.executeSQL("SELECT  id,firstName,lastName,title,phone,company,email,created_at FROM [dbo].[customer_master] where email='"+request.body.email+"'", (err, data,rows,jsonArray) => {
             if (err){
               console.error(err);
             }
@@ -140,12 +140,7 @@ exports.siginWithPassword = async (req, reply) => {
                     // reply.status(StatusCodes.NOT_FOUND).send({"message":"not ***found"})
                 } else {
                      var accountId = JSON.stringify(column[0].value)
-                     console.log("&&&&&"+JSON.stringify(column[0].value));
-                     console.log("&&&&&"+JSON.stringify(column[1].value));
-                     console.log("&&&&&"+JSON.stringify(column[2].value));
-                     console.log("&&&&&"+JSON.stringify(column[3].value));
-                     console.log("&&&&&"+JSON.stringify(column[4].value));
-                     console.log("&&&&&"+JSON.stringify("otc"+(("0000" + accountId).slice())));
+                       
                      accountData ={
                              "firstName":column[1].value,
                             "lastName":column[2].value,
@@ -153,7 +148,8 @@ exports.siginWithPassword = async (req, reply) => {
                             "phone":column[4].value,
                             "company":column[5].value,
                             "email": column[6].value,
-                            "accountId":"otc"+(("0000" + accountId).slice())
+                            "accountId":"otc"+(("0000" + accountId).slice()),
+                            "created_at":column[7].value
                         }  
                         console.log("---------"+JSON.stringify(accountData))
                         if (accountData) {
