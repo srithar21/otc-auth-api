@@ -6,6 +6,8 @@ var logger = require('morgan');
 
 var usersRouter = require('./src/routes/users');
 var accountRoutes = require('./src/controller/accounts/routes')
+const session = require('express-session')
+
 
 var app = express();
 
@@ -15,6 +17,12 @@ app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
   next();
 });
+
+app.use(session({
+  'secret': process.env.SECRET,
+  resave: true,
+  saveUninitialized: true
+}))
  
 
 
