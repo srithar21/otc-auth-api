@@ -18,7 +18,7 @@ exports.create = async (req, reply) => {
         const response = await fetch(httpUtils.hostURL+'/v1/accounts:signUp?key='+httpUtils.apiKey, {
         method: 'POST',
         body: JSON.stringify(req.body),
-        headers: { 'Content-Type': 'application/json', "Origin": "http:localhost:3000",
+        headers: { 'Content-Type': 'application/json', "Origin": "https://otc-web-qa.azurewebsites.net",
         "Access-Control-Request-Method": "*",
         "withCredentials": "true" }
     });
@@ -47,11 +47,7 @@ exports.accountInfo = async (req, reply) => {
             // });
             const response =    getAccountFromDB (req,reply);
             console.log("%%%%%%%%%%%%%%%%%%%%%%"+response)
-            // if (response) {
-            //     reply.status(StatusCodes.OK).send(response)
-            // } else  {
-            //     reply.status(StatusCodes.NOT_FOUND).send({"message":"not found"})
-            // }
+            
         } else{
             reply.status(StatusCodes.NOT_FOUND).send({"message":"not found"})
         }
