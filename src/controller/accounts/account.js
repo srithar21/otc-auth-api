@@ -20,6 +20,7 @@ exports.create = async (req, reply) => {
         body: JSON.stringify(req.body),
         headers: { 'Content-Type': 'application/json', "Origin": "https://otc-web-qa.azurewebsites.net",
         "Access-Control-Request-Method": "*",
+        "Access-Control-Allow-Origin": "*",
         "withCredentials": "true" }
     });
         const responseData = await response.json();
