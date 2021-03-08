@@ -40,6 +40,12 @@ exports.accountInfo = async (req, reply) => {
     try{
         console.log("*********Query ***********" +req.query.email)
         console.log("&&&&&"+req.session.email+"&&&&&&&")
+        let allowedOrigins = ["http://localhost:3000", "https://otc-web-qa.azurewebsites.net"]
+ 
+        reply.header("Access-Control-Allow-Origin", allowedOrigins);
+        reply.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        reply.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+        reply.header("withCredentials", "true");
         if (req.session.email == req.query.email) {
             
             console.log("*********Session***********" +req.session.email)
