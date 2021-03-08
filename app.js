@@ -23,14 +23,25 @@ var cors = require('cors');
 // use it before all route definitions
 app.use(cors({origin: '*'}));
 
+// app.use(session({
+//   'secret': process.env.SECRET,
+//   resave: true,
+//   saveUninitialized: true,
+//   cookie: {
+//     secure: true
+//   }
+// }))
+
+var MemoryStore =session.MemoryStore;
+
+
 app.use(session({
-  'secret': process.env.SECRET,
+  name : 'app.sid',
+  secret: process.env.SECRET,
   resave: true,
-  saveUninitialized: true,
-  cookie: {
-    secure: true
-  }
-}))
+  store: new MemoryStore(),
+  saveUninitialized: true
+}));
  
 
 

@@ -39,6 +39,7 @@ exports.create = async (req, reply) => {
 exports.accountInfo = async (req, reply) => { 
     try{
         console.log("*********Query ***********" +req.query.email)
+        console.log("&&&&&"+req.session.email+"&&&&&&&")
         if (req.session.email == req.query.email) {
             console.log("*********Session***********" +req.session.email)
             console.log(req.body)
@@ -94,12 +95,11 @@ exports.siginWithPassword = async (req, reply) => {
  function setSession(req,expireIn) {
     console.log(expireIn)
     req.session.email=req.body.email
+    console.log("&&&&&"+req.session.email)
     // var hour = parseInt(expireIn)
     // req.session.cookie.expires = new Date(Date.now() + hour);
 
     // req.session.cookie.maxAge = hour
-
- 
  }
 
 
