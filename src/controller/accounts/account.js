@@ -44,6 +44,7 @@ exports.accountInfo = async (req, reply) => {
  
         reply.header("Access-Control-Allow-Origin", allowedOrigins);
         reply.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        reply.header("Access-Control-Allow-Credentials", "true");
         reply.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
         reply.header("withCredentials", "true");
         if (req.session.email == req.query.email) {
