@@ -41,12 +41,10 @@ exports.accountInfo = async (req, reply) => {
         console.log("*********Query ***********" +req.query.email)
         console.log("&&&&&"+req.session.email+"&&&&&&&")
         if (req.session.email == req.query.email) {
+            
             console.log("*********Session***********" +req.session.email)
             console.log(req.body)
             console.log(httpUtils.hostURL)
-            // getAccountFromDB (req).then(function(res){
-            //     console.log(":::::::::::"+res);
-            // });
             const response =    getAccountFromDB (req,reply);
             console.log("%%%%%%%%%%%%%%%%%%%%%%"+response)
             

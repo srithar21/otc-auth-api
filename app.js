@@ -11,10 +11,22 @@ const session = require('express-session')
 
 var app = express();
 
+
+
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  console.log("Express session response ouside cors")
+
+  let allowedOrigins = ["http://localhost:3000", "https://otc-web-qa.azurewebsites.net"]
+  // let origin = req.headers.origin;
+  // console.log(origin)
+  // if (allowedOrigins.includes(origin)) {
+  //   console.log("Express session response inside cors")
+  //     res.header("Access-Control-Allow-Origin", allowedOrigins); // restrict it to the required domain
+  // }
+  res.header("Access-Control-Allow-Origin", allowedOrigins);
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+  res.header("withCredentials", "true");
   next();
 });
 
