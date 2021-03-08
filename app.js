@@ -40,7 +40,10 @@ app.use(session({
   secret: process.env.SECRET,
   resave: true,
   store: new MemoryStore(),
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: {
+    secure: true
+  }
 }));
  
 
