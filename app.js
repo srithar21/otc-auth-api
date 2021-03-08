@@ -26,7 +26,7 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", allowedOrigins);
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-  reply.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Credentials", "true");
 
   res.header("withCredentials", "true");
   next();
