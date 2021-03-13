@@ -6,7 +6,7 @@ const { ReasonPhrases,
     getStatusCode,} = require("http-status-codes");
 const dbConnection = require('../db/dbconnect.js')
 const httpUtils = require('../../util/httputils');
-const redis = require('../../util/redis')
+// const redis = require('../../util/redis')
 
 
 
@@ -36,7 +36,7 @@ exports.create = async (req, reply) => {
     }                                                                               
  }
 
-exports.accountInfo = async (req, reply) => { 
+exports.accountDetail = async (req, reply) => { 
     try{
         console.log("*********Query ***********" +req.query.email)
         console.log("&&&&&"+req.session.email+"&&&&&&&")
@@ -52,18 +52,41 @@ exports.accountInfo = async (req, reply) => {
             console.log("*********Session***********" +req.session.email)
             console.log(req.body)
             console.log(httpUtils.hostURL)
-            const response =    getAccountFromDB (req,reply);
+            const response =    getAccountFromDB (req.query.email,reply);
             console.log("%%%%%%%%%%%%%%%%%%%%%%"+response)
-            
-        // } else{
-        //     reply.status(StatusCodes.NOT_FOUND).send({"message":"not found"})
-        // }
+        
     }catch(error) {
 	    console.log(error);
     }                                                                               
  }
 
+  
+ exports.accountInfo = async (req, reply) => { 
+    try{
+        // console.log("********************" +redis.testCache())
+        console.log(req.body)
+        console.log(httpUtils.hostURL)
+        const response = await fetch(httpUtils.hostURL+'/v1/accounts:lookup?key='+httpUtils.apiKey, {
+        method: 'POST',
+        body: JSON.stringify(req.body),
+        headers: { 'Content-Type': 'application/json', "Origin": "https://otc-web-qa.azurewebsites.net",
+        "Access-Control-Request-Method": "*",
+        "Access-Control-Allow-Origin": "*",
+        "withCredentials": "true" }
+    });
+        const responseData = await response.json();
+        console.log(responseData.users[0].email)
 
+        if (response.status == StatusCodes.OK && responseData.users[0].email) {
+              const response =    getAccountFromDB (responseData.users[0].email,reply);
+        }
+        
+        // reply.status(response.status).send(responseData)
+    }catch(error) {
+        console.log("Inside /info api exception")
+	    console.log(error);
+    }                                                                               
+ }
  
 
 exports.siginWithPassword = async (req, reply) => { 
@@ -101,10 +124,6 @@ exports.siginWithPassword = async (req, reply) => {
     console.log(expireIn)
     req.session.email=req.body.email
     console.log("&&&&&"+req.session.email)
-    // var hour = parseInt(expireIn)
-    // req.session.cookie.expires = new Date(Date.now() + hour);
-
-    // req.session.cookie.maxAge = hour
  }
 
 
@@ -128,10 +147,12 @@ exports.siginWithPassword = async (req, reply) => {
     
  }
 
-  const getAccountFromDB = (request,reply) => {
+
+ 
+  const getAccountFromDB = (email,reply) => {
     try{
         var accountData;
-         let uniqueId = dbConnection.executeSQL("SELECT  id,firstName,lastName,title,phone,company,email,created_at FROM [dbo].[customer_master] where email='"+request.query.email+"'", (err, data,rows,jsonArray) => {
+         let uniqueId = dbConnection.executeSQL("SELECT  id,firstName,lastName,title,phone,company,email,created_at FROM [dbo].[customer_master] where email='"+email+"'", (err, data,rows,jsonArray) => {
             if (err){
               console.error(err);
             }
