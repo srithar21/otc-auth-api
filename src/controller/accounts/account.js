@@ -77,10 +77,12 @@ exports.accountDetail = async (req, reply) => {
         "withCredentials": "true" }
     });
         const responseData = await response.json();
-        console.log(responseData.users[0].email)
+          
 
-        if (response.status == StatusCodes.OK && responseData.users[0].email) {
+        if (response.status == StatusCodes.OK ) {
+            if (responseData.users[0].email) {
               const response =    getAccountFromDB (responseData.users[0].email,reply);
+            }
         } else {
             reply.status(response.status).send(responseData)
         }
