@@ -81,6 +81,8 @@ exports.accountDetail = async (req, reply) => {
 
         if (response.status == StatusCodes.OK && responseData.users[0].email) {
               const response =    getAccountFromDB (responseData.users[0].email,reply);
+        } else {
+            reply.status(response.status).send(responseData)
         }
         
         // reply.status(response.status).send(responseData)
