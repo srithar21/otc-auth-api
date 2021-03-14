@@ -13,6 +13,7 @@ const httpUtils = require('../../util/httputils');
 exports.create = async (req, reply) => { 
     try{
         // console.log("********************" +redis.testCache())
+        
         console.log(req.body)
         console.log(httpUtils.hostURL)
         const response = await fetch(httpUtils.hostURL+'/v1/accounts:signUp?key='+httpUtils.apiKey, {
@@ -25,6 +26,7 @@ exports.create = async (req, reply) => {
     });
         const responseData = await response.json();
         console.log(responseData.localId)
+        
         if (response.status == StatusCodes.OK) {
             setSession(req, responseData.expiresIn)
             console.log("Inside db insert")
@@ -100,6 +102,8 @@ exports.siginWithPassword = async (req, reply) => {
         console.log(responseData.localId)
         if (response.status == StatusCodes.OK) {
             setSession(req, 3600)
+            reply.status(response.status).send(responseData)
+        } else {
             reply.status(response.status).send(responseData)
         }
     }catch(error) {
