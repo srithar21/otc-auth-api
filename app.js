@@ -7,6 +7,8 @@ var logger = require('morgan');
 var usersRouter = require('./src/routes/users');
 var accountRoutes = require('./src/controller/accounts/routes')
 var paymenSessionRoutes = require('./src/controller/stripe/payment-session-routes')
+var subscriptionRoutes = require('./src/controller/subscription/subscription-details-routes')
+
 const session = require('express-session')
 
 
@@ -90,6 +92,9 @@ app.use('/users', usersRouter);
 app.use('/api/account', accountRoutes);
 
 app.use('/api/payment', paymenSessionRoutes);
+
+
+app.use('/api/subscription', subscriptionRoutes);
 
 // accountRoutes.forEach((route, index) => {
 //     app.route(route)
