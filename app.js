@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var usersRouter = require('./src/routes/users');
 var accountRoutes = require('./src/controller/accounts/routes')
+var paymenSessionRoutes = require('./src/controller/stripe/payment-session-routes')
 const session = require('express-session')
 
 
@@ -87,6 +88,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', usersRouter);
 
 app.use('/api/account', accountRoutes);
+
+app.use('/api/payment', paymenSessionRoutes);
 
 // accountRoutes.forEach((route, index) => {
 //     app.route(route)
