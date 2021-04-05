@@ -63,7 +63,7 @@ exports.createSubscriptionSession = async (req, res) => {
               //     },
               //     unit_amount: 2000,
               // },
-              price: "price_1IXS6MFzfcjDT1x8oA2KmSnJ",
+              price: "price_1IXS6MFzfcjDT1x8",
               quantity: 1,
           }],
           mode: 'subscription',
