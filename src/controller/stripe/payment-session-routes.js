@@ -3,4 +3,5 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/create-checkout-session', paymentSession.createSession)
+router.post('/create-subscription-session', paymentSession.createSession)
 module.exports = router

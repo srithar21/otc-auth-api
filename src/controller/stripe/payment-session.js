@@ -44,3 +44,38 @@ exports.createSession = async (req, res) => {
         console.log(error)
     }
 }
+
+exports.createSubscriptionSession = async (req, res) => { 
+  try {
+      console.log(req.body)
+      // console.log(req.body.price)
+      // res.send("Sample service")
+
+      const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: [
+            {
+              // price_data: {
+              //     currency: 'usd',
+              //     product_data: {
+              //       name: 'Stubborn Attachments',
+              //       images: ['https://i.imgur.com/EHyR2nP.png'],
+              //     },
+              //     unit_amount: 2000,
+              // },
+              price: "price_1IXS6MFzfcjDT1x8oA2KmSnJ",
+              quantity: 1,
+          }],
+          mode: 'subscription',
+          customer_email:req.body.email,
+          locale:'en',
+
+          success_url: `${YOUR_DOMAIN}/success.html`,
+          cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+        });
+      
+        res.json({ id: session.id });
+  } catch (error) {
+      console.log(error)
+  }
+}
