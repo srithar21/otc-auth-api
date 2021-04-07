@@ -73,6 +73,7 @@ exports.createSubscriptionSession = async (req, res) => {
       
         res.json({ id: session.id });
   } catch (error) {
+    res.json({ err: error });
       console.log(error)
   }
 }
