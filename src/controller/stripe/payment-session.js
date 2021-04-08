@@ -48,23 +48,12 @@ exports.createSession = async (req, res) => {
 exports.createSubscriptionSession = async (req, res) => { 
   try {
       console.log(req.body)
-      // console.log(req.body.price)
-      // res.send("Sample service")
-
       const session = await stripe.checkout.sessions.create({
           mode: 'subscription',
           payment_method_types: ['card'],
           line_items: [
-            {
-              // price_data: {
-              //     currency: 'usd',
-              //     product_data: {
-              //       name: 'Stubborn Attachments',
-              //       images: ['https://i.imgur.com/EHyR2nP.png'],
-              //     },
-              //     unit_amount: 2000,
-              // },
-              price: "price_1IXS6MFzfcjDT1x8",
+            {              
+              price: "price_1IXS6MFzfcjDT1x8oA2KmSnJ",
               quantity: 1,
           }],
           success_url: `${YOUR_DOMAIN}/success.html`,
