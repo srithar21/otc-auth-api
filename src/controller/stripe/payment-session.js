@@ -9,6 +9,7 @@ const httpUtils = require('../../util/httputils');
 const stripe = require('stripe')('sk_test_51IL9i5FzfcjDT1x8NKOn12BKxKRxttlWBHaAzkDdxjZydQLWglGFQM3NNBkcSCm67NImEn60i1kFaCDp2nNQ8bTE00PFJVtZfp');
 // const YOUR_DOMAIN = 'http://localhost:3000';
 const YOUR_DOMAIN = 'https://auth-qa-service.azurewebsites.net';
+const WEB_DOMAIN = 'https://otc-web-qa.azurewebsites.net';
 
 
 exports.createSession = async (req, res) => { 
@@ -56,8 +57,8 @@ exports.createSubscriptionSession = async (req, res) => {
               price: "price_1IXS6MFzfcjDT1x8oA2KmSnJ",
               quantity: 1,
           }],
-          success_url: `${YOUR_DOMAIN}/success`,
-          cancel_url: `${YOUR_DOMAIN}/cancel`,
+          success_url: `${WEB_DOMAIN}/success`,
+          cancel_url: `${WEB_DOMAIN}/cancel`,
         });
       
         res.json({ id: session.id });
