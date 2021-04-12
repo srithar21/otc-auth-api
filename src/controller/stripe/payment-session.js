@@ -56,8 +56,8 @@ exports.createSubscriptionSession = async (req, res) => {
               price: "price_1IXS6MFzfcjDT1x8oA2KmSnJ",
               quantity: 1,
           }],
-          success_url: `${YOUR_DOMAIN}/success.html`,
-          cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+          success_url: `${YOUR_DOMAIN}/success`,
+          cancel_url: `${YOUR_DOMAIN}/cancel`,
         });
       
         res.json({ id: session.id });
