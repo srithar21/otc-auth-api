@@ -23,10 +23,10 @@ exports.details = async (req, res) => {
 
 exports.list = async (req, res) => { 
     try {
-        console.log(req.body)
+        
         const subscriptionList = await stripe.subscriptions.list({
             limit: 3,
-            customer: req.body.customer
+            customer: req.query.customer
         });
         
         res.json({ result: subscriptionList });
