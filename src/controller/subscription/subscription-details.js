@@ -6,6 +6,8 @@ const { ReasonPhrases,
     getStatusCode,} = require("http-status-codes");
 const httpUtils = require('../../util/httputils');
 
+const stripe = require('stripe')('sk_test_51IL9i5FzfcjDT1x8NKOn12BKxKRxttlWBHaAzkDdxjZydQLWglGFQM3NNBkcSCm67NImEn60i1kFaCDp2nNQ8bTE00PFJVtZfp');
+
 exports.details = async (req, res) => { 
     let response = {
         "status":false,
@@ -16,5 +18,35 @@ exports.details = async (req, res) => {
         res.send(response)
     } catch (error) {
         console.log(error)
+    }
+}
+
+exports.list = async (req, res) => { 
+    try {
+        console.log(req.body)
+        const subscriptionList = await stripe.subscriptions.list({
+            limit: 3,
+            customer: req.body.customer
+        });
+        
+        res.json({ result: subscriptionList });
+    } catch (error) {
+        console.log(error)
+      res.json({ err: error });
+        
+    }
+  }
+
+exports.cancel = async (req, res) => { 
+    try {
+        console.log(req.body)
+        const subscriptionList = await stripe.subscriptions.del(            
+            req.body.id
+        );
+        
+        res.json({ result: subscriptionList });
+    } catch (error) {
+        console.log(error)
+        res.json({ err: error });        
     }
 }
