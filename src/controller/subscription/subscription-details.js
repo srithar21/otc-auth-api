@@ -50,3 +50,29 @@ exports.cancel = async (req, res) => {
         res.json({ err: error });        
     }
 }
+
+exports.invoiceList = async (req, res) => { 
+    try {
+        console.log(req.query.customer);
+        const invoiceList = await stripe.invoices.list({             
+            customer: req.query.customer
+        });
+        
+        res.json({ result: invoiceList });
+    } catch (error) {
+        console.log(error)
+        res.json({ err: error });        
+    }
+}
+
+exports.productList = async (req, res) => { 
+    try {
+        console.log(req.query.customer);
+        const productList = await stripe.products.list({});
+        
+        res.json({ result: productList });
+    } catch (error) {
+        console.log(error)
+        res.json({ err: error });        
+    }
+}
