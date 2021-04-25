@@ -54,13 +54,13 @@ exports.create = async (req, reply) => {
           if (response.status == StatusCodes.OK) {
             setSession(req, responseData.expiresIn);
             console.log("Inside db insert");
+
+            responseData['stripeCustomerId'] = createCustomer.id;
             insertCustomerData(req.body, responseData);
 
             const createCustomer = await stripe.customers.create({            
               email: req.body.email
-            });
-
-            responseData['stripeCustomerId'] = createCustomer.id;
+            });            
           }
           reply.status(response.status).send(responseData);
         }
@@ -188,7 +188,7 @@ function setSession(req, expireIn) {
 function insertCustomerData(body, response) {
   try {
     dbConnection.executeSQL(
-      "Insert into customer_master(localId, firstName, lastName, title, company, email, phone) values(" +
+      "Insert into customer_master(localId, firstName, lastName, title, company, email, phone, stripe_customer_id) values(" +
         "'" +
         response.localId +
         "'," +
@@ -209,6 +209,8 @@ function insertCustomerData(body, response) {
         "'," +
         "'" +
         body.phone +
+        "'" +
+        response['stripeCustomerId'] +
         "')",
       (err, data) => {
         if (err) console.error(err);
@@ -223,7 +225,7 @@ const getAccountFromDB = (email, reply) => {
   try {
     var accountData;
     let uniqueId = dbConnection.executeSQL(
-      "SELECT  id,firstName,lastName,title,phone,company,email,created_at FROM [dbo].[customer_master] where email='" +
+      "SELECT  id,firstName,lastName,title,phone,company,email,created_at,stripe_customer_id FROM [dbo].[customer_master] where email='" +
         email +
         "'",
       (err, data, rows, jsonArray) => {
@@ -247,6 +249,7 @@ const getAccountFromDB = (email, reply) => {
               email: column[6].value,
               accountId: "otc" + ("0000" + accountId).slice(),
               created_at: column[7].value,
+              stripeCustomerId: column[8].value
             };
             console.log("---------" + JSON.stringify(accountData));
             if (accountData) {
