@@ -55,12 +55,12 @@ exports.create = async (req, reply) => {
             setSession(req, responseData.expiresIn);
             console.log("Inside db insert");
 
-            responseData['stripeCustomerId'] = createCustomer.id;
-            insertCustomerData(req.body, responseData);
-
             const createCustomer = await stripe.customers.create({            
               email: req.body.email
-            });            
+            });   
+
+            responseData['stripeCustomerId'] = createCustomer.id;
+            insertCustomerData(req.body, responseData);                     
           }
           reply.status(response.status).send(responseData);
         }
