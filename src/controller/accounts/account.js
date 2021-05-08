@@ -209,7 +209,7 @@ function insertCustomerData(body, response) {
         "'," +
         "'" +
         body.phone +
-        "'" +
+        "','" +
         response['stripeCustomerId'] +
         "')",
       (err, data) => {
