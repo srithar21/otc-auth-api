@@ -1,5 +1,9 @@
 const fetch = require("node-fetch");
+const sgMail = require("@sendgrid/mail");
+
 require("dotenv").config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const {
   ReasonPhrases,
   StatusCodes,
@@ -275,3 +279,32 @@ const getAccountFromDB = (email, reply) => {
 exports.getInfo = async (req, reply) => {
   reply.send("Welcome to get");
 };
+
+exports.forgotPassword = (req, res) => {
+  let verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+  sgMail
+    .send({
+      to: req.body.to,
+      from: "srithar@onetimecode.io",
+      templateId: "d-0d373f9d88f4491b9ccb7fe89524ea4a",
+      dynamicTemplateData: {        
+        "twilio_code": verificationCode
+      }
+    })
+    .then(
+      (message) => {
+        res.status(200).json({ 
+          messageId: '', from: process.env.EMAIL_FROM, to: req.body.to, message: 'Code '+verificationCode+' sent to '+req.body.to , 
+          code: verificationCode, agentId: req.body.agentId 
+        });
+      },
+      (error) => {
+        console.error(error);
+
+        if (error.response) {
+            res.status(200).json({ msg: error.response });
+        }
+      }
+    );
+}

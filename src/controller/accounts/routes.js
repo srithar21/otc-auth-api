@@ -16,4 +16,6 @@ router.get('/detail', accountController.accountDetail)
 
 router.post('/info', accountController.accountInfo)
 
+router.post('/forgot-password', accountController.forgotPassword)
+
 module.exports = router

@@ -21,6 +21,7 @@
     "node-fetch": "^2.6.1",
     "redis": "^3.0.2",
     "stripe": "^8.138.0",
-    "tedious": "^11.0.4"
+    "tedious": "^11.0.4",
+    "@sendgrid/mail": "^7.4.2"
   }
 }
