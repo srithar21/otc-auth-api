@@ -14,7 +14,9 @@ const dbConnection = require("../db/dbconnect.js");
 const httpUtils = require("../../util/httputils");
 // const redis = require('../../util/redis')
 
-const stripe = require('stripe')('sk_test_51IL9i5FzfcjDT1x8NKOn12BKxKRxttlWBHaAzkDdxjZydQLWglGFQM3NNBkcSCm67NImEn60i1kFaCDp2nNQ8bTE00PFJVtZfp');
+const stripe = require("stripe")(
+  "sk_test_51IL9i5FzfcjDT1x8NKOn12BKxKRxttlWBHaAzkDdxjZydQLWglGFQM3NNBkcSCm67NImEn60i1kFaCDp2nNQ8bTE00PFJVtZfp"
+);
 
 exports.create = async (req, reply) => {
   try {
@@ -59,12 +61,12 @@ exports.create = async (req, reply) => {
             setSession(req, responseData.expiresIn);
             console.log("Inside db insert");
 
-            const createCustomer = await stripe.customers.create({            
-              email: req.body.email
-            });   
+            const createCustomer = await stripe.customers.create({
+              email: req.body.email,
+            });
 
-            responseData['stripeCustomerId'] = createCustomer.id;
-            insertCustomerData(req.body, responseData);                     
+            responseData["stripeCustomerId"] = createCustomer.id;
+            insertCustomerData(req.body, responseData);
           }
           reply.status(response.status).send(responseData);
         }
@@ -72,7 +74,6 @@ exports.create = async (req, reply) => {
     );
 
     console.log(req.body);
-    
   } catch (error) {
     console.log(error);
   }
@@ -159,7 +160,7 @@ exports.siginWithPassword = async (req, reply) => {
       }
     );
     const responseData = await response.json();
-    console.log(responseData.localId);
+    console.log(responseData);
     if (response.status == StatusCodes.OK) {
       setSession(req, 3600);
       reply.status(response.status).send(responseData);
@@ -169,6 +170,52 @@ exports.siginWithPassword = async (req, reply) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+exports.updatePassword = async (req, reply) => {
+  try {
+    
+      const response = await fetch(
+        httpUtils.hostURL +
+          "/v1/accounts:signInWithPassword?key=" +
+          httpUtils.apiKey,
+        {
+          method: "POST",
+          body: JSON.stringify(req.body),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const responseData = await response.json();
+      console.log(responseData);
+      if (response.status == StatusCodes.OK) {
+        req.body["idToken"] = responseData.idToken;
+        req.body["password"] = req.body.newPassword;
+
+        const response = await fetch(
+          httpUtils.hostURL +
+            "/v1/accounts:update?key=" +
+            httpUtils.apiKey,
+          {
+            method: "POST",
+            body: JSON.stringify(req.body),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        const responseData1 = await response.json();
+        console.log(responseData1);
+        if (response.status == StatusCodes.OK) {
+          // setSession(req, 3600);
+          reply.status(response.status).send(responseData1);
+        } else {
+          reply.status(response.status).send(responseData1);
+        }
+      
+      } else {
+        reply.status(response.status).send(responseData);
+      }
+    } catch (error) {
+      console.log(error);
+    }    
 };
 
 exports.root = async (req, reply) => {
@@ -214,7 +261,7 @@ function insertCustomerData(body, response) {
         "'" +
         body.phone +
         "','" +
-        response['stripeCustomerId'] +
+        response["stripeCustomerId"] +
         "')",
       (err, data) => {
         if (err) console.error(err);
@@ -253,7 +300,7 @@ const getAccountFromDB = (email, reply) => {
               email: column[6].value,
               accountId: "otc" + ("0000" + accountId).slice(),
               created_at: column[7].value,
-              stripeCustomerId: column[8].value
+              stripeCustomerId: column[8].value,
             };
             console.log("---------" + JSON.stringify(accountData));
             if (accountData) {
@@ -281,30 +328,64 @@ exports.getInfo = async (req, reply) => {
 };
 
 exports.forgotPassword = (req, res) => {
-  let verificationCode = Math.floor(100000 + Math.random() * 900000);
+  try {
+    dbConnection.executeSQL(
+      "SELECT  id FROM [dbo].[customer_master] where email='" +
+        req.body.email +
+        "'",
+      async (err, data, rows, jsonArray) => {
+        if (err) {
+          console.error(err);
+          reply.status(500).send(err);
+        }
 
-  sgMail
-    .send({
-      to: req.body.to,
-      from: "srithar@onetimecode.io",
-      templateId: "d-0d373f9d88f4491b9ccb7fe89524ea4a",
-      dynamicTemplateData: {        
-        "twilio_code": verificationCode
-      }
-    })
-    .then(
-      (message) => {
-        res.status(200).json({ 
-          messageId: '', from: process.env.EMAIL_FROM, to: req.body.to, message: 'Code '+verificationCode+' sent to '+req.body.to , 
-          code: verificationCode, agentId: req.body.agentId 
-        });
-      },
-      (error) => {
-        console.error(error);
+        console.log(data);
 
-        if (error.response) {
-            res.status(200).json({ msg: error.response });
+        if (data.rows.length > 0) {
+          let verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+          dbConnection.executeSQL(
+            "update customer_master set reset_password_code = '" + verificationCode + "', reset_code_created_at = getdate() where email = '" + req.body.email + "'" ,
+            (err, data) => {
+              if (err) console.error(err);
+
+              sgMail
+                .send({
+                  to: req.body.to,
+                  from: "srithar@onetimecode.io",
+                  templateId: "d-0d373f9d88f4491b9ccb7fe89524ea4a",
+                  dynamicTemplateData: {
+                    twilio_code: verificationCode,
+                  },
+                })
+                .then(
+                  (message) => {
+                    res.status(200).json({
+                      messageId: "",
+                      from: process.env.EMAIL_FROM,
+                      to: req.body.to,
+                      message:
+                        "Code " + verificationCode + " sent to " + req.body.to,
+                      code: verificationCode,
+                      agentId: req.body.agentId,
+                    });
+                  },
+                  (error) => {
+                    console.error(error);
+
+                    if (error.response) {
+                      res.status(200).json({ msg: error.response });
+                    }
+                  }
+                );
+            }
+          );
+        } else {
+          reply.status(500).send({ msg: "Email not exists in the system" });
         }
       }
     );
-}
+  } catch (error) {
+    console.log(error);
+  }
+};

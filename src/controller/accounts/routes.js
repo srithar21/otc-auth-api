@@ -18,4 +18,6 @@ router.post('/info', accountController.accountInfo)
 
 router.post('/forgot-password', accountController.forgotPassword)
 
+router.post('/update-password', accountController.updatePassword)
+
 module.exports = router
