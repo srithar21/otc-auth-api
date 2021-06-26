@@ -372,9 +372,10 @@ exports.forgotPassword = (req, res) => {
                 .send({
                   to: req.body.to,
                   from: "srithar@onetimecode.io",
-                  templateId: "d-0d373f9d88f4491b9ccb7fe89524ea4a",
+                  templateId: "d-505aa68d480e45718280c4834a335fb4",
                   dynamicTemplateData: {
-                    twilio_code: verificationCode,
+                    verification_code: verificationCode,
+                    email: to
                   },
                 })
                 .then(
