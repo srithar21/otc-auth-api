@@ -174,48 +174,59 @@ exports.siginWithPassword = async (req, reply) => {
 
 exports.updatePassword = async (req, reply) => {
   try {
-    
-      const response = await fetch(
-        httpUtils.hostURL +
-          "/v1/accounts:signInWithPassword?key=" +
-          httpUtils.apiKey,
-        {
-          method: "POST",
-          body: JSON.stringify(req.body),
-          headers: { "Content-Type": "application/json" },
+    let to = "lux@otc.io";
+    dbConnection.executeSQL(
+      "SELECT  id FROM [dbo].[customer_master] where email='" + to + "' and code='" + req.body.code + "' and datediff(mi, reset_code_created_at, getdate()) <= 3",
+      async (err, data, rows, jsonArray) => {
+        if (err) {
+          console.error(err);
+          res.status(500).send(err);
         }
-      );
-      const responseData = await response.json();
-      console.log(responseData);
-      if (response.status == StatusCodes.OK) {
-        req.body["idToken"] = responseData.idToken;
-        req.body["password"] = req.body.newPassword;
 
-        const response = await fetch(
-          httpUtils.hostURL +
-            "/v1/accounts:update?key=" +
-            httpUtils.apiKey,
-          {
-            method: "POST",
-            body: JSON.stringify(req.body),
-            headers: { "Content-Type": "application/json" },
+        console.log(data);
+
+        if (data.rows.length > 0) {
+          const response = await fetch(
+            httpUtils.hostURL +
+              "/v1/accounts:signInWithPassword?key=" +
+              httpUtils.apiKey,
+            {
+              method: "POST",
+              body: JSON.stringify(req.body),
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+          const responseData = await response.json();
+          console.log(responseData);
+          if (response.status == StatusCodes.OK) {
+            req.body["idToken"] = responseData.idToken;
+            req.body["password"] = req.body.newPassword;
+
+            const response = await fetch(
+              httpUtils.hostURL + "/v1/accounts:update?key=" + httpUtils.apiKey,
+              {
+                method: "POST",
+                body: JSON.stringify(req.body),
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+            const responseData1 = await response.json();
+            console.log(responseData1);
+            if (response.status == StatusCodes.OK) {
+              // setSession(req, 3600);
+              reply.status(response.status).send(responseData1);
+            } else {
+              reply.status(response.status).send(responseData1);
+            }
+          } else {
+            reply.status(response.status).send(responseData);
           }
-        );
-        const responseData1 = await response.json();
-        console.log(responseData1);
-        if (response.status == StatusCodes.OK) {
-          // setSession(req, 3600);
-          reply.status(response.status).send(responseData1);
-        } else {
-          reply.status(response.status).send(responseData1);
         }
-      
-      } else {
-        reply.status(response.status).send(responseData);
       }
-    } catch (error) {
-      console.log(error);
-    }    
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 exports.root = async (req, reply) => {
@@ -329,14 +340,13 @@ exports.getInfo = async (req, reply) => {
 
 exports.forgotPassword = (req, res) => {
   try {
+    let to = req.body.to;
     dbConnection.executeSQL(
-      "SELECT  id FROM [dbo].[customer_master] where email='" +
-        req.body.email +
-        "'",
+      "SELECT  id FROM [dbo].[customer_master] where email='" + to + "'",
       async (err, data, rows, jsonArray) => {
         if (err) {
           console.error(err);
-          reply.status(500).send(err);
+          res.status(500).send(err);
         }
 
         console.log(data);
@@ -345,7 +355,11 @@ exports.forgotPassword = (req, res) => {
           let verificationCode = Math.floor(100000 + Math.random() * 900000);
 
           dbConnection.executeSQL(
-            "update customer_master set reset_password_code = '" + verificationCode + "', reset_code_created_at = getdate() where email = '" + req.body.email + "'" ,
+            "update customer_master set reset_password_code = '" +
+              verificationCode +
+              "', reset_code_created_at = getdate() where email = '" +
+              to +
+              "'",
             (err, data) => {
               if (err) console.error(err);
 
@@ -381,7 +395,7 @@ exports.forgotPassword = (req, res) => {
             }
           );
         } else {
-          reply.status(500).send({ msg: "Email not exists in the system" });
+          res.status(500).send({ msg: "Email not exists in the system" });
         }
       }
     );
