@@ -174,13 +174,16 @@ exports.siginWithPassword = async (req, reply) => {
 
 exports.updatePassword = async (req, reply) => {
   try {
-    let to = "lux@otc.io";
     dbConnection.executeSQL(
-      "SELECT  id FROM [dbo].[customer_master] where email='" + to + "' and code='" + req.body.code + "' and datediff(mi, reset_code_created_at, getdate()) <= 3",
+      "SELECT  id FROM [dbo].[customer_master] where email='" +
+        req.body.email +
+        "' and reset_password_code='" +
+        req.body.code +
+        "' and datediff(mi, reset_code_created_at, getdate()) <= 3",
       async (err, data, rows, jsonArray) => {
         if (err) {
           console.error(err);
-          res.status(500).send(err);
+          reply.status(500).send(err);
         }
 
         console.log(data);
@@ -221,6 +224,8 @@ exports.updatePassword = async (req, reply) => {
           } else {
             reply.status(response.status).send(responseData);
           }
+        } else {
+          reply.status(response.status).send(data);
         }
       }
     );
