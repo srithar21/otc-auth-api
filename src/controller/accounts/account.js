@@ -12,6 +12,7 @@ const {
 } = require("http-status-codes");
 const dbConnection = require("../db/dbconnect.js");
 const httpUtils = require("../../util/httputils");
+const WEB_DOMAIN = 'https://app-qa.onetimecode.io';
 // const redis = require('../../util/redis')
 
 const stripe = require("stripe")(
@@ -47,7 +48,7 @@ exports.create = async (req, reply) => {
               body: JSON.stringify(req.body),
               headers: {
                 "Content-Type": "application/json",
-                Origin: "https://otc-web-qa.azurewebsites.net",
+                Origin: WEB_DOMAIN,
                 "Access-Control-Request-Method": "*",
                 "Access-Control-Allow-Origin": "*",
                 withCredentials: "true",
@@ -86,6 +87,7 @@ exports.accountDetail = async (req, reply) => {
     let allowedOrigins = [
       "http://localhost:3000",
       "https://otc-web-qa.azurewebsites.net",
+      WEB_DOMAIN
     ];
 
     reply.header("Access-Control-Allow-Origin", allowedOrigins);
@@ -123,7 +125,7 @@ exports.accountInfo = async (req, reply) => {
         body: JSON.stringify(req.body),
         headers: {
           "Content-Type": "application/json",
-          Origin: "https://otc-web-qa.azurewebsites.net",
+          Origin: WEB_DOMAIN,
           "Access-Control-Request-Method": "*",
           "Access-Control-Allow-Origin": "*",
           withCredentials: "true",
@@ -372,7 +374,7 @@ exports.forgotPassword = (req, res) => {
                 .send({
                   to: req.body.to,
                   from: "srithar@onetimecode.io",
-                  templateId: "d-505aa68d480e45718280c4834a335fb4",
+                  templateId: "d-7815cdb44a1a46c1a89491ad9d5fad0e",
                   dynamicTemplateData: {
                     verification_code: verificationCode,
                     email: to

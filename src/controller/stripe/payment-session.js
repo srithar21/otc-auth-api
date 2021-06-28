@@ -9,7 +9,8 @@ const httpUtils = require('../../util/httputils');
 const stripe = require('stripe')('sk_test_51IL9i5FzfcjDT1x8NKOn12BKxKRxttlWBHaAzkDdxjZydQLWglGFQM3NNBkcSCm67NImEn60i1kFaCDp2nNQ8bTE00PFJVtZfp');
 // const YOUR_DOMAIN = 'http://localhost:3000';
 const YOUR_DOMAIN = 'https://auth-qa-service.azurewebsites.net';
-const WEB_DOMAIN = 'https://otc-web-qa.azurewebsites.net';
+// const WEB_DOMAIN = 'https://otc-web-qa.azurewebsites.net';
+const WEB_DOMAIN = 'https://app-qa.onetimecode.io';
 
 
 exports.createSession = async (req, res) => { 

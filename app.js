@@ -19,7 +19,7 @@ var app = express();
 app.use(function(req, res, next) {
   console.log("Express session response ouside cors")
 
-   let allowedOrigins = ["http://localhost:3000", "https://otc-web-qa.azurewebsites.net"]
+   let allowedOrigins = ["http://localhost:3000", "https://otc-web-qa.azurewebsites.net", "https://app-qa.onetimecode.io"]
   // let origin = req.headers.origin;
   // console.log(origin)
   // if (allowedOrigins.includes(origin)) {
