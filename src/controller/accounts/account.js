@@ -346,68 +346,87 @@ exports.getInfo = async (req, reply) => {
 };
 
 exports.forgotPassword = (req, res) => {
-  try {
-    let to = req.body.to;
-    dbConnection.executeSQL(
-      "SELECT  id FROM [dbo].[customer_master] where email='" + to + "'",
-      async (err, data, rows, jsonArray) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send(err);
-        }
-
-        console.log(data);
-
-        if (data.rows.length > 0) {
-          let verificationCode = Math.floor(100000 + Math.random() * 900000);
-
-          dbConnection.executeSQL(
-            "update customer_master set reset_password_code = '" +
-              verificationCode +
-              "', reset_code_created_at = getdate() where email = '" +
-              to +
-              "'",
-            (err, data) => {
-              if (err) console.error(err);
-
-              sgMail
-                .send({
-                  to: req.body.to,
-                  from: "srithar@onetimecode.io",
-                  templateId: "d-7815cdb44a1a46c1a89491ad9d5fad0e",
-                  dynamicTemplateData: {
-                    verification_code: verificationCode,
-                    email: to
-                  },
-                })
-                .then(
-                  (message) => {
-                    res.status(200).json({
-                      messageId: "",
-                      from: process.env.EMAIL_FROM,
-                      to: req.body.to,
-                      message:
-                        "Code " + verificationCode + " sent to " + req.body.to,
-                      code: verificationCode,
-                      agentId: req.body.agentId,
-                    });
-                  },
-                  (error) => {
-                    console.error(error);
-
-                    if (error.response) {
-                      res.status(200).json({ msg: error.response });
-                    }
-                  }
-                );
-            }
-          );
-        } else {
-          res.status(500).send({ msg: "Email not exists in the system" });
-        }
-      }
-    );
-  } catch (error) {
-    console.log(error);
+  const response = await fetch(
+    httpUtils.hostURL + "/v1/accounts:sendOobCode?key=" + httpUtils.apiKey,
+    {
+      method: "POST",
+      body: JSON.stringify(req.body),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  const responseData1 = await response.json();
+  console.log(responseData1);
+  if (response.status == StatusCodes.OK) {
+    // setSession(req, 3600);
+    reply.status(response.status).send(responseData1);
+  } else {
+    reply.status(response.status).send(responseData1);
   }
-};
+}
+
+// exports.forgotPassword = (req, res) => {
+//   try {
+//     let to = req.body.to;
+//     dbConnection.executeSQL(
+//       "SELECT  id FROM [dbo].[customer_master] where email='" + to + "'",
+//       async (err, data, rows, jsonArray) => {
+//         if (err) {
+//           console.error(err);
+//           res.status(500).send(err);
+//         }
+
+//         console.log(data);
+
+//         if (data.rows.length > 0) {
+//           let verificationCode = Math.floor(100000 + Math.random() * 900000);
+
+//           dbConnection.executeSQL(
+//             "update customer_master set reset_password_code = '" +
+//               verificationCode +
+//               "', reset_code_created_at = getdate() where email = '" +
+//               to +
+//               "'",
+//             (err, data) => {
+//               if (err) console.error(err);
+
+//               sgMail
+//                 .send({
+//                   to: req.body.to,
+//                   from: "srithar@onetimecode.io",
+//                   templateId: "d-7815cdb44a1a46c1a89491ad9d5fad0e",
+//                   dynamicTemplateData: {
+//                     verification_code: verificationCode,
+//                     email: to
+//                   },
+//                 })
+//                 .then(
+//                   (message) => {
+//                     res.status(200).json({
+//                       messageId: "",
+//                       from: process.env.EMAIL_FROM,
+//                       to: req.body.to,
+//                       message:
+//                         "Code " + verificationCode + " sent to " + req.body.to,
+//                       code: verificationCode,
+//                       agentId: req.body.agentId,
+//                     });
+//                   },
+//                   (error) => {
+//                     console.error(error);
+
+//                     if (error.response) {
+//                       res.status(200).json({ msg: error.response });
+//                     }
+//                   }
+//                 );
+//             }
+//           );
+//         } else {
+//           res.status(500).send({ msg: "Email not exists in the system" });
+//         }
+//       }
+//     );
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
