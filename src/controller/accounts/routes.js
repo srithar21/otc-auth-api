@@ -18,7 +18,7 @@ router.get('/hasAccount', accountController.hasAccountFromDomain)
 
 router.post('/info', accountController.accountInfo)
 
-// router.post('/forgot-password', accountController.forgotPassword)
+router.post('/forgot-password', accountController.forgotPassword)
 
 router.post('/update-password', accountController.updatePassword)
 

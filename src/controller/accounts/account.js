@@ -378,9 +378,7 @@ const getAccountFromDB = (email, reply) => {
 const hasAccount = (emailDomain, reply) => {
   try {
     var accountData;
-    console.log( "SELECT TOP (1) id FROM [dbo].[customer_master] where emaile '" +
-    emailDomain +
-      "'");
+   
     let uniqueId = dbConnection.executeSQL(
       "SELECT TOP (1) id FROM [dbo].[customer_master] where email like '%" +
       emailDomain +
@@ -426,24 +424,24 @@ exports.getInfo = async (req, reply) => {
   reply.send("Welcome to get");
 };
 
-// exports.forgotPassword = (req, res) => {
-//   const response = await fetch(
-//     httpUtils.hostURL + "/v1/accounts:sendOobCode?key=" + httpUtils.apiKey,
-//     {
-//       method: "POST",
-//       body: JSON.stringify(req.body),
-//       headers: { "Content-Type": "application/json" },
-//     }
-//   );
-//   const responseData1 = await response.json();
-//   console.log(responseData1);
-//   if (response.status == StatusCodes.OK) {
-//     // setSession(req, 3600);
-//     reply.status(response.status).send(responseData1);
-//   } else {
-//     reply.status(response.status).send(responseData1);
-//   }
-// }
+exports.forgotPassword = async (req, res) => {
+  const response = await fetch(
+    httpUtils.hostURL + "/v1/accounts:sendOobCode?key=" + httpUtils.apiKey,
+    {
+      method: "POST",
+      body: JSON.stringify(req.body),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  const responseData1 = await response.json();
+  console.log(responseData1);
+  if (response.status == StatusCodes.OK) {
+    // setSession(req, 3600);
+    reply.status(response.status).send(responseData1);
+  } else {
+    reply.status(response.status).send(responseData1);
+  }
+}
 
 // exports.forgotPassword = (req, res) => {
 //   try {
