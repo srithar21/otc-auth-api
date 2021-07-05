@@ -4,7 +4,7 @@ var router = express.Router();
 
 
  
- 
+
 
 router.post('/create', accountController.create)
  
@@ -14,9 +14,11 @@ router.post('/login', accountController.siginWithPassword)
 
 router.get('/detail', accountController.accountDetail)
 
+router.get('/hasAccount', accountController.hasAccountFromDomain)
+
 router.post('/info', accountController.accountInfo)
 
-router.post('/forgot-password', accountController.forgotPassword)
+// router.post('/forgot-password', accountController.forgotPassword)
 
 router.post('/update-password', accountController.updatePassword)
 

@@ -113,6 +113,39 @@ exports.accountDetail = async (req, reply) => {
   }
 };
 
+exports.hasAccountFromDomain = async (req, reply) => {
+  try {
+    console.log("*********Query ***********" + req.query.email);
+    console.log("&&&&&" + req.session.email + "&&&&&&&");
+    let allowedOrigins = [
+      "http://localhost:3000",
+      "https://otc-web-qa.azurewebsites.net",
+      WEB_DOMAIN
+    ];
+
+    reply.header("Access-Control-Allow-Origin", allowedOrigins);
+    reply.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    reply.header("Access-Control-Allow-Credentials", "true");
+    reply.header(
+      "Access-Control-Allow-Methods",
+      "PUT, POST, GET, DELETE, OPTIONS"
+    );
+    reply.header("withCredentials", "true");
+    // if (req.session.email == req.query.email) {
+
+    console.log("*********Session***********" + req.session.email);
+    console.log(req.body);
+    console.log(httpUtils.hostURL);
+    const response = hasAccount(req.query.domain, reply);
+    console.log("%%%%%%%%%%%%%%%%%%%%%%" + response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 exports.accountInfo = async (req, reply) => {
   try {
     // console.log("********************" +redis.testCache())
@@ -341,28 +374,76 @@ const getAccountFromDB = (email, reply) => {
   // return JSON.stringify(accountData)
 };
 
+
+const hasAccount = (emailDomain, reply) => {
+  try {
+    var accountData;
+    console.log( "SELECT TOP (1) id FROM [dbo].[customer_master] where emaile '" +
+    emailDomain +
+      "'");
+    let uniqueId = dbConnection.executeSQL(
+      "SELECT TOP (1) id FROM [dbo].[customer_master] where email like '%" +
+      emailDomain +
+        "%'",
+      (err, data, rows, jsonArray) => {
+        if (err) {
+          console.error(err);
+        }
+        console.log('Data --->', data);
+        if (data.rows.length === 0 ) {
+          reply
+          .status(StatusCodes.NOT_FOUND)
+          .send({ message: "not found" });
+          return;
+        }
+        data.rows.forEach((column) => {
+          if (column.value === null) {
+            console.log("NULL");
+          } else {
+            var accountId = JSON.stringify(column[0].value);
+            console.log('accountId --->', accountId);           
+            if (accountId) {
+              reply.status(StatusCodes.OK).send({'accountId': accountId});
+            } else {
+              reply
+                .status(StatusCodes.NOT_FOUND)
+                .send({ message: "not found" });
+            }
+          }
+        });
+      }
+    );
+    //  reply.status(StatusCodes.NOT_FOUND).send({"message":"not found"})
+    console.log("Outside");
+  } catch (error) {
+    console.log(error);
+  }
+  console.log("++++++++++" + accountData);
+  // return JSON.stringify(accountData)
+};
+
 exports.getInfo = async (req, reply) => {
   reply.send("Welcome to get");
 };
 
-exports.forgotPassword = (req, res) => {
-  const response = await fetch(
-    httpUtils.hostURL + "/v1/accounts:sendOobCode?key=" + httpUtils.apiKey,
-    {
-      method: "POST",
-      body: JSON.stringify(req.body),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
-  const responseData1 = await response.json();
-  console.log(responseData1);
-  if (response.status == StatusCodes.OK) {
-    // setSession(req, 3600);
-    reply.status(response.status).send(responseData1);
-  } else {
-    reply.status(response.status).send(responseData1);
-  }
-}
+// exports.forgotPassword = (req, res) => {
+//   const response = await fetch(
+//     httpUtils.hostURL + "/v1/accounts:sendOobCode?key=" + httpUtils.apiKey,
+//     {
+//       method: "POST",
+//       body: JSON.stringify(req.body),
+//       headers: { "Content-Type": "application/json" },
+//     }
+//   );
+//   const responseData1 = await response.json();
+//   console.log(responseData1);
+//   if (response.status == StatusCodes.OK) {
+//     // setSession(req, 3600);
+//     reply.status(response.status).send(responseData1);
+//   } else {
+//     reply.status(response.status).send(responseData1);
+//   }
+// }
 
 // exports.forgotPassword = (req, res) => {
 //   try {
